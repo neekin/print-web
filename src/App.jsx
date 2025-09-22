@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import PrintMain from './pages/printMain'
+import PrintMain from './pages/PrintMain'
 import { healthCheck, /* createAndVerify */ } from './utils/licenceService'
 
 // 免重复校验缓存时长（毫秒），例如 10 分钟；不需要可设为 0
