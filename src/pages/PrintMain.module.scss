@@ -1,0 +1,64 @@
+.bg{
+    width: 1000x;
+    height: 100vh;
+    background-color: #fff;
+    position: relative;
+}
+.caipiao{
+    background: url(../assets/caipiao.png) no-repeat;
+    background-size: 655px 100%;
+    width: 655px;
+    height: 650px;
+    position: relative;
+}
+.preview{
+    position: absolute;
+    bottom: 40px;
+}
+.exclusivelist{
+   .exclusiveitem{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+   }
+    .number{
+        padding: 0 10px;
+        font-size: 26px;
+        font-weight: 900;
+    }
+    .multiple{
+        padding:0 10px;
+        font-size: 20px;
+    }
+    position: absolute;
+    top: 240px;
+    margin-left: 80px;
+
+}
+
+.cri{
+    display: inline-block;
+    border:1px solid #000;
+    border-radius: 50px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    font-size: 12px;
+    padding: unset !important;
+    font-size: unset !important;
+}
+
+.palyfunction{
+    position: absolute;
+    top:134px;
+    font-size: 22px;
+    font-weight: 900;
+    margin-left: 130px;
+}
+.info{
+    top:200px;
+    position: absolute;
+    margin-left: 80px;
+    font-size: 16px;
+}   
