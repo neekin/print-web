@@ -16,6 +16,7 @@ import EightSignleSelect from '../components/eightSignleSelect'
 import { httpRequest } from '../utils/httpRequest'
 import { getStrCode, getVerTicketCode } from '../utils/tools'
 import { buildPreviewHtml ,pixelsToMM} from '../utils/receiptTemplate'
+import { printHtmlTicket } from '../utils/print'   // 新增引入
 
 import { usePersistedInfo } from '../hooks/usePersistedInfo'
 import { useSerialNumber } from '../hooks/useSerialNumber'
@@ -158,13 +159,15 @@ function PrintMain() {
       messageApi.warning('无有效投注')
       return
     }
-   
-
-    // 发送给 C# (WebView2)
-     window.chrome.webview.postMessage( JSON.stringify({
-          type: 'printHtml',
-          html:buildPreviewHtml(data,pixelsToMM(offsetX)),
-        }))
+    try {
+      await printHtmlTicket(data, offsetX, 203)
+      messageApi.success('打印成功')
+      clearOrders()
+      setShowPreview(false)
+      setImgSrc(null)
+    } catch (err) {
+      messageApi.error('打印失败: ' + err.message)
+    }
   }
 
     const renderPlayComponent = () => {
