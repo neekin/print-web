@@ -11,7 +11,6 @@ function App() {
 
   useEffect(() => {
     const isDev = import.meta.env.DEV
-    alert(isDev)
     if (isDev) {
       setAllow(true)
       return
