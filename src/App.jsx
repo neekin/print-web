@@ -10,15 +10,12 @@ function App() {
   const [allow, setAllow] = useState(null)
 
   useEffect(() => {
-    const bypass =
-      process.env.REACT_APP_BYPASS_LICENSE === '1' ||
-      /^(localhost|127\.0\.0\.1)$/i.test(window.location.hostname)
-
-    if (bypass) {
+    const isDev = import.meta.env.DEV
+    alert(isDev)
+    if (isDev) {
       setAllow(true)
       return
     }
-
     // 缓存命中：最近一次成功校验在 TTL 内
     if (LICENSE_CACHE_TTL > 0) {
       const last = parseInt(localStorage.getItem(LICENSE_CACHE_KEY) || '0', 10)
@@ -35,31 +32,31 @@ function App() {
     }
 
     let canceled = false
-    ;(async () => {
-      try {
-        const result = await healthCheck(machineCode, 1)
-        if (canceled) return
-        if (result.ok) {
-          localStorage.setItem(LICENSE_CACHE_KEY, Date.now().toString())
-          setAllow(true)
-        } else {
-          // 如需失败时自动创建再校验，取消下面注释
-          /*
-          const created = await createAndVerify(machineCode, 1)
+      ; (async () => {
+        try {
+          const result = await healthCheck(machineCode, 1)
           if (canceled) return
-          if (created.ok) {
+          if (result.ok) {
             localStorage.setItem(LICENSE_CACHE_KEY, Date.now().toString())
             setAllow(true)
           } else {
+            // 如需失败时自动创建再校验，取消下面注释
+            /*
+            const created = await createAndVerify(machineCode, 1)
+            if (canceled) return
+            if (created.ok) {
+              localStorage.setItem(LICENSE_CACHE_KEY, Date.now().toString())
+              setAllow(true)
+            } else {
+              setAllow(false)
+            }
+            */
             setAllow(false)
           }
-          */
-          setAllow(false)
+        } catch {
+          if (!canceled) setAllow(false)
         }
-      } catch {
-        if (!canceled) setAllow(false)
-      }
-    })()
+      })()
 
     return () => { canceled = true }
   }, [])

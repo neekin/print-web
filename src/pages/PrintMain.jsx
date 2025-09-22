@@ -195,7 +195,8 @@ function PrintMain() {
       />
     )
   }
- const isDev = process.env.NODE_ENV === 'development'
+    // eslint-disable-next-line no-undef
+   const isDev = import.meta.env.DEV
    const getStoredNumber = (key, defaultValue = 0) => {
     try {
       const storedValue = localStorage.getItem(key)
