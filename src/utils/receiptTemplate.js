@@ -1,5 +1,5 @@
 // 要点调整：
-// 1. 统一票纸：物理 80mm，内容 76mm（左右各 2mm 余量，避免热敏有效宽度不足裁切）
+// 1. 统一票纸：物理 76mm，内容 76mm（左右各 2mm 余量，避免热敏有效宽度不足裁切）
 // 2. 使用 flex+gap-spacer = flex:1 实现每行左右两端对齐（左侧内容 / 右侧倍数）
 // 3. 数字字体等宽特性（font-feature-settings: 'tnum'）保证列对齐更稳定
 // 4. html2canvas 截图时请确保挂载容器设置 root.style.width='76mm'
@@ -152,226 +152,173 @@ function generateOrderRows(data) {
     </div>`).join('')
 }
 
-export function buildReceiptHtml(data,offsetX_mm=20) {
+export function buildReceiptHtml(data, offsetX_mm = 0) {
   const isHappyEight = data.playClass === '快乐8'
-   const getTitle = () => {
-        let title = '3D'
-        if (isHappyEight) {
-          title = '快 乐 8'
-        }
-        return title
-      }
+  const getTitle = () => isHappyEight ? '快 乐 8' : '3D'
   const barcodeImg = data.barcodeData
     ? `<div class="barcode-container"><img src="${data.barcodeData.startsWith('data:') ? data.barcodeData : 'data:image/png;base64,' + data.barcodeData}" /></div>`
     : ''
+//   return `<!DOCTYPE html>
+// <html lang="en">
+// <head>
+//     <meta charset="UTF-8">
+//     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+//     <title>Document</title>
+//     <style>*{padding:0;margin:0}</style>
+// </head>
+// <body>
+//     1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz
+// </body>
+// </html>` // 占位，避免 prettier 自动删除下面的模板字符串
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>打印小票</title>
+<style>
+*{padding:0;margin:0}
+/* 屏幕预览固定 640px，不再使用 mm，避免浏览器缩放造成偏差 */
+html,body{
+  margin:0;
+  padding:0;
+  width:74mm;
+  font:10px/1.25 "Microsoft YaHei","Arial",sans-serif;
+  
+   position:relative;
+   overflow:hidden;
+        -webkit-print-color-adjust: exact; /* Chrome/Safari 强制打印背景和颜色 */
+        print-color-adjust: exact; /* 标准 */
+}
+.receipt-container{
+  box-sizing:border-box;
+  width:74mm;
+  margin:0 auto;
+  padding:0;
+  
+}
 
-  // 【样式总迁移】严格按照 index.js 的样式和布局逻辑重写
-  return `
-      <!DOCTYPE html>
-      <html>
-      <head>
-          <meta charset="UTF-8">
-          <title>打印小票</title>
-          <style>
-          html,body{
-              padding:0;margin:0;
-              width:80mm;           /* 或直接 640px（二选一） */
-            }
-            body{
-              font:12px/1.25 "Microsoft YaHei","Arial",sans-serif;
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-            #receipt{
-              width:80mm;           /* 或 640px，与上保持一致 */
-              box-sizing:border-box;
-            }
-              body {
-                  font-family: "Microsoft YaHei", "微软雅黑", Arial;
-                  font-size: 10px; /* 根据实际效果调整基础字号 */
-                  width: 76mm; /* 实际可打印宽度 */
-                  margin: 0;
-                  padding:0;
-                  line-height: 1.1;
-                  color: black;
-                  background-color: white; /* 确保背景是白色 */
-                  overflow: hidden;
-              }
-              .receipt-container {
-                  padding: 0; /* 上下留一点边距 */
-                  width: 100%;
-                  box-sizing: border-box;
-                  min-height:310px;
-                  overflow: hidden;
-                  position: relative;
- 
-              }
-              .center { text-align: center; }
-              .bold { font-weight: bold; }
-              .header { font-size: 12px; margin-bottom: 4px; }
-              .game-name { font-size: 16px; margin-bottom: 4px;font-family: "Microsoft YaHei", "微软雅黑", Arial;}
-              .info-line { 
-                  display: grid;
-                  grid-template-columns: repeat(3, 1fr);
-                  font-size: 12px;
-                  
-              }
-              .info-line span {  }
-              .info-line .label { /* 可选，如果需要标签 */ }
-              .info-line .value { /* 可选 */ }
-              .separator { border-top: 1px dashed black; margin: 5px 0; }
-              .order-section { margin-top:4px; max-height:160px; overflow: hidden;  }
-              .order-line {line-height: 13px;overflow: hidden; display: flex;margin-bottom: 3px; font-size: 12px; font-family: "Microsoft YaHei", "微软雅黑", Arial; }
-              .order-line .index { padding-right: 5px; font-family: "Microsoft YaHei", "微软雅黑", Arial;flex-shrink: 0 }
-              .order-line .numbers { 
-                  font-size: 16px;
-                  letter-spacing: 4px; 
-                  text-align: left;
-                  font-family: "Microsoft YaHei", "微软雅黑", Arial;
-                  min-width:60px;
-        
-              }
-    
-              .happy{
-                    display: flex;
-                    align-items: center;
-                    flex-wrap: wrap;
-              }
-              .happy .multiple{
-                margin-left:20px;
-              }
+/* 打印：统一只声明一次宽度，纸宽 74mm，内容 74mm（左右 2mm） */
+ @media print {
+   * {
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeSpeed;
+  }
+    @page {
+        size: 76mm auto; /* 纸张尺寸 */
+        margin: 0; /* 打印边距 */
+        padding:0;
+       
+       
+    }
+    body {
+        width: 74mm; /* 实际可打印宽度 */
+        margin: 0;
+        padding: 0;
+        background:#fff;
+      
+         
+    }
+    .receipt-container {
+      width: 72mm;
+        padding: 0; /* 打印时的实际边距 */
             
-              .happy-eight-lines{
-                display:inline-block;
-                font-size:0;
-                vertical-align: top;
-              }
-              .happy-eight-lines .he-row{
-                display:flex;
-                align-items:center;
-                margin-bottom:2px;
-                font-size:15px;
-              }
-              .happy-eight-lines .he-row:last-child{
-                margin-bottom:0;
-              }
-              .happy-eight-lines .num{
-                display:inline-block;
-                width:20px;
-                text-align:center;
-                font-size:18px;
-              }
-              .happy-eight-lines .plus{
-                display:inline-block;
-                width:14px;
-                text-align:center;
-                font-size:18px;
-              }
-              .happy-eight-lines .multiple-inline{
-                display:inline-block;
-                margin-left:6px;
-                font-size:14px;
-                line-height:16px;
-              }
-              .happy-eight-grid{
-                  display: inline-grid;
-                  grid-template-columns: repeat(var(--cols, 1), 20px);
-                  gap: 2px 4px;
-                  margin-left: 4px;
-                  font-size: 16px;
-              }
-              .happy-eight-grid.is-full{
-                  font-size: 14px; /* 缩小1号字体 (从16px到14px) */
-                  grid-template-columns: repeat(var(--cols, 1), 18px); /* 同时减小每列的宽度 */
-                  gap: 2px 3px; /* 也可以适当减小间距 */
-              }
-              .happy  >.num{
-                  font-family: "Microsoft YaHei", "微软雅黑", Arial;
-                  font-size: 16px;
-                  letter-spacing: 0px;
-                  box-sizing: border-box;
-                  text-align: center;
-                  min-width: 0; /* 防止内容溢出 */
-              }  
-              .happy  .multiple{
-                 font-size: 14px;
-                 margin-left:10px;
-                  }
-              .order-happy-eight-container{
-                  display: grid;
-                  grid-template-columns: repeat(10, 22px);
-                  align-items: center;
-                  justify-content: start; /* 左对齐 */
-              }
-               .order-happy-eight-container >.num{
-                  font-family: "Microsoft YaHei", "微软雅黑", Arial;
-                  font-size: 16px;
-                  letter-spacing: 0px;
-                  box-sizing: border-box;
-                  text-align: center;
-                  min-width: 0; /* 防止内容溢出 */
-              }  
-              .spc{width:4px;}
-              .order-happy-eight-container .multiple{
-                 font-size: 14px;
-                 margin-left:10px;
-                  }
-              .order-line .dantuo { 
-                  font-size: 16px;
-        
-                  letter-spacing: 1px; 
-                  text-align: left;
-                 font-family: "Microsoft YaHei", "微软雅黑", Arial;
-                  white-space: nowrap; 
-              }
-              .order-line .pos-index {font-size: 14px; padding-right: 8px; font-family: "Microsoft YaHei", "微软雅黑", Arial; }
-             
-              .order-line .pos-numbers { 
-                  font-size: 16px;
-                  letter-spacing: 4px; 
-                  text-align: left;
-                 font-family: "Microsoft YaHei", "微软雅黑", Arial;
-              }
-            .sanjiao{
-              position: relative;
-              display: inline-block;
-              overflow: hidden;
-              height: 16px;
-              width: 19px;
-              line-height: 16px;
-              font-size: 30px;
-          }
+        margin-left: ${offsetX_mm}mm;
+    }
+  }
 
-          .sanjiao::after{
-            content: "◇";
-            position: absolute;
-            top:0;
-          }
-          .sanjiao::before{
-            content: "";
-            height: 8px;
-            width: 100%;
-            background-color: #fff;
-            position: absolute;
-            bottom: 0;
-            z-index: 1;
-          }
-  
-  
-              .order-line .multiple { flex-shrink: 0; text-align: left; font-family: "Microsoft YaHei", "微软雅黑", Arial; }
-              .order-line .posmultiple{ padding-left: 5px; text-align: left; font-family: "Microsoft YaHei", "微软雅黑", Arial; }
-              .totals-line { font-size: 12px;font-family: "Microsoft YaHei", "微软雅黑", Arial;text-align: center; padding-bottom: 4px;}
-              .footer-line { font-size: 12px;  line-height: 12px; }
-              .footer-line span{ font-size: 10px; }
-              .barcode-container, .qrcode-container {  margin-top:2px; margin-bottom: 2px; }
-              .barcode-container img, .qrcode-container img { max-width: 100%; height: auto; display: inline-block; }
-              .point{
-               font-size: 10px;
-                transform: scale(0.1);
-                position: absolute;
-                bottom: 0;
-                 
-              }
+/* 以下保持原有结构样式（仅影响排版，不改内容生成） */
+.center{text-align:center;}
+.bold{font-weight:600;}
+.header{font-size:12px;margin-bottom:4px;}
+.game-name{font-size:16px;margin-bottom:4px;}
+.info-line{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  font-size:11px;
+}
+.order-section{margin-top:4px;overflow:hidden;}
+.order-line{
+  display:flex;
+  align-items:center;
+  font-size:12px;
+  line-height:13px;
+  margin-bottom:3px;
+  overflow:hidden;
+  font-family:"Microsoft YaHei","微软雅黑",Arial;
+}
+.order-line:last-child{margin-bottom:0;}
+.index,.pos-index{padding-right:5px;flex-shrink:0;}
+.numbers,.pos-numbers{font-size:16px;letter-spacing:4px;}
+.dantuo{font-size:16px;letter-spacing:1px;white-space:nowrap;}
+.multiple,.multiple-inline{font-size:14px;margin-left:10px;flex-shrink:0;}
+
+.happy{display:flex;align-items:center;flex-wrap:wrap;}
+.happy .multiple{margin-left:20px;}
+
+.happy-eight-lines{display:inline-block;font-size:0;vertical-align:top;}
+.happy-eight-lines .he-row{display:flex;align-items:center;margin-bottom:2px;font-size:15px;}
+.happy-eight-lines .he-row:last-child{margin-bottom:0;}
+.happy-eight-lines .num{display:inline-block;width:20px;text-align:center;font-size:18px;}
+.happy-eight-lines .plus{display:inline-block;width:14px;text-align:center;font-size:18px;}
+.happy-eight-lines .multiple-inline{display:inline-block;margin-left:6px;font-size:14px;line-height:16px;}
+
+.happy-eight-grid{
+  display:inline-grid;
+  grid-template-columns:repeat(var(--cols,1),20px);
+  gap:2px 4px;
+  margin-left:4px;
+  font-size:16px;
+}
+.happy-eight-grid.is-full{
+  font-size:14px;
+  grid-template-columns:repeat(var(--cols,1),18px);
+  gap:2px 3px;
+}
+
+.order-happy-eight-container{
+  display:grid;
+  grid-template-columns:repeat(10,22px);
+  align-items:center;
+  justify-content:start;
+}
+.order-happy-eight-container > .num{
+  font-size:16px;
+  text-align:center;
+}
+
+.sanjiao{
+  position:relative;
+  display:inline-block;
+  overflow:hidden;
+  height:16px;
+  width:19px;
+  line-height:16px;
+  font-size:30px;
+}
+.sanjiao::after{
+  content:"◇";
+  position:absolute;
+  top:0;
+  left:0;
+}
+.sanjiao::before{
+  content:"";
+  position:absolute;
+  bottom:0;
+  left:0;
+  height:8px;
+  width:100%;
+  background:#fff;
+  z-index:1;
+}
+
+.totals-line{font-size:12px;text-align:center;padding-bottom:4px;}
+.footer-line{font-size:12px;line-height:12px;}
+.footer-line span{font-size:10px;}
+.barcode-container,.qrcode-container{margin:2px 0;}
+.barcode-container img,.qrcode-container img{max-width:96%;height:auto;display:inline-block;}
+.mono{font-feature-settings:"tnum";font-variant-numeric:tabular-nums;}
                 .gap-spacer {
                   width: 20px;       /* 理想的间距大小 */
                   min-width: 0;        /* 允许收缩到 0 */
@@ -379,101 +326,48 @@ export function buildReceiptHtml(data,offsetX_mm=20) {
                                         /* (假设 element-b 的 flex-shrink 是默认的 1 或更小的值) */
                   /* background-color: rgba(0,0,0,0.1); /* 可选：用于调试时可视化垫片 */
                 }
-              /* 打印特定样式 */
-              /* @media print {
-                  @page {
-                      size: 80mm auto; /* 纸张尺寸 */
-                      margin: 0; /* 打印边距 */
-                      min-height:310px;
-                     overflow: hidden;
-                  }
-                  body {
-                      width: 76mm; /* 实际可打印宽度 */
-                      margin: 0;
-                      padding: 0;
-                      background:#fff;
-                      -webkit-print-color-adjust: exact; /* Chrome/Safari 强制打印背景和颜色 */
-                      print-color-adjust: exact; /* 标准 */
-                      min-height:320px;
-                       overflow: hidden;
-                  }
-                  .receipt-container {
-                     padding: 0; /* 打印时的实际边距 */
-                     overflow: hidden;
-                     margin-left: ${offsetX_mm}mm;
-                  }
-              }*/
-              .bold{
-                  font-weight:600;
-               }
-                  /* 打印专用：切换单位并禁止再次缩放 */
-              @media print {
-                @page {
-                  size: 80mm auto;
-                  margin: 0;
-                }
-                html, body {
-                  width:80mm;        /* 纸宽 */
-                  margin:0;
-                  padding:0;
-                }
-                /* 真实可打印内容 76mm，留左右 2mm（可用 padding 或内包一层） */
-                .receipt-container {
-                  width:76mm;
-                  margin:0 2mm;
-                  box-sizing:border-box;
-                }
-              }
-
-              /* 其它字体/行高等保持不变... */
-              .mono {
-                font-feature-settings:"tnum";
-                font-variant-numeric: tabular-nums;
-              }
-          </style>
-      </head>
-      <body>
-          <div class="receipt-container">
-              <div class="center bold header">${data.strCode}</div>
-              <div class="center  game-name ${isHappyEight ? 'bold' : ''}">${getTitle(data.orders)}</div>
-              <div class="info-line">
-                  <span>期号:${data.salePeriod}</span>
-                  <span>流水号:${data.serialNumber}</span>
-                  <span>多期:1</span>
-              </div>
-              <div class="info-line">
-                  <span>金额:${data.price}元</span>
-                  <span style="grid-column: span 2;">玩　法:${isHappyEight ? data.orders[0]?.[0] : data.playMethod}</span>
-              </div>
-              <div class="info-line">
-                  <span style="grid-column: span 2;">销售时间:${data.saleTime || data.ticketSaleTime}</span>
-                  <span>开奖:${data.drawTime}</span>
-              </div>
-              <div class="order-section">
-                  ${generateOrderRows(data)}
-              </div>
-
-              <div class="totals-line" ${isHappyEight ? 'style="text-align: left;"' : ''}>
-                  <span>${isHappyEight ? `感谢您为公益事业贡献 ${data.contribute} 元` : `**感谢您为公益事业贡献 ${data.contribute} 元**`}</span>
-              </div>
-
-              <div class="footer-line">${data.machineCode}:${data.storeAddress}</div>
-              <div class="footer-line">验票码:<span>${isHappyEight ? (data.verTicketCode || '').slice(0,17) : (data.verTicketCode || '')}</span></div>
-              ${!isHappyEight && data.lastPeriodData ? `<div class="footer-line">${data.lastPeriodData}</div>` : ''}
-              ${barcodeImg}
-              ${
-                data.qrCodeData
-                  ? `<div class="qrcode-container"><img id="qrCodeImg" src="data:image/png;base64,${data.qrCodeData}" alt="QR Code"></div>`
-                  : ''
-              }
-
-              <div class="footer-line center">${data.copywriting}</div>
-              <div class="point">.</div>
-          </div>
-      </body>
-      </html>
-    `
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+  <div class="receipt-container">
+    <div class="center bold header">${data.strCode}</div>
+    <div class="center game-name ${isHappyEight ? 'bold':''}">${getTitle()}</div>
+    <div class="info-line">
+      <span>期号:${data.salePeriod}</span>
+      <span>流水号:${data.serialNumber}</span>
+      <span>多期:1</span>
+    </div>
+    <div class="info-line">
+      <span>金额:${data.price}元</span>
+      <span style="grid-column:span 2;">玩　法:${isHappyEight ? data.orders[0]?.[0] : data.playMethod}</span>
+    </div>
+    <div class="info-line">
+      <span style="grid-column:span 2;">销售时间:${data.saleTime || data.ticketSaleTime}</span>
+      <span>开奖:${data.drawTime}</span>
+    </div>
+    <div class="order-section">
+      ${generateOrderRows(data)}
+    </div>
+    <div class="totals-line" ${isHappyEight ? 'style="text-align:left;"':''}>
+      <span>感谢您为公益事业贡献 ${data.contribute} 元</span>
+    </div>
+    <div class="footer-line">${data.machineCode}:${data.storeAddress}</div>
+    <div class="footer-line">验票码:<span>${isHappyEight ? (data.verTicketCode || '').slice(0,17) : (data.verTicketCode || '')}</span></div>
+    ${!isHappyEight && data.lastPeriodData ? `<div class="footer-line">${data.lastPeriodData}</div>` : ''}
+    ${barcodeImg}
+    ${data.qrCodeData ? `<div class="qrcode-container"><img id="qrCodeImg" src="data:image/png;base64,${data.qrCodeData}" alt="QR Code"></div>` : ''}
+    <div class="footer-line center">${data.copywriting}</div>
+  </div>
+  <div class='point'></div>
+</body>
+</html>`
 }
+
+export function buildPreviewHtml(data, offsetX_mm = 0) {
+  return buildReceiptHtml(data, offsetX_mm)
+}
+
 export function pixelsToMM(pixels, dpi = 203) {
   if (typeof pixels !== 'number' || typeof dpi !== 'number' || dpi <= 0) {
     console.error('无效的输入值 for pixelsToMM')
@@ -482,9 +376,4 @@ export function pixelsToMM(pixels, dpi = 203) {
   const inches = pixels / dpi
   const mm = inches * 25.4
   return mm
-}
-
-
-export function buildPreviewHtml(data,offsetX_mm=0) {
-  return buildReceiptHtml(data,offsetX_mm)
 }
