@@ -12,7 +12,7 @@ import TwoD from '../components/twod'
 import DragCode from '../components/dragCode'
 import HappyEight from '../components/happyEight'
 import EightSignleSelect from '../components/eightSignleSelect'
-
+import EightDoubleSelect from '../components/eightDoubleSelect'
 import { httpRequest } from '../utils/httpRequest'
 import { getStrCode, getVerTicketCode } from '../utils/tools'
 import { buildPreviewHtml ,pixelsToMM} from '../utils/receiptTemplate'
@@ -37,7 +37,8 @@ const PLAY_RENDER_REGISTRY = {
   },
   '快乐8': {
     // 根据你实际的选项名同时兼容
-    '单式':        { type: 'single', component: EightSignleSelect } // 若后面只用“单式”
+    '单式':        { type: 'single', component: EightSignleSelect },// 若后面只用“单式”
+    '复式':        { type: 'single', component: EightDoubleSelect }
   }
 }
 
@@ -108,7 +109,7 @@ function PrintMain() {
         })
         .catch(() => {})
     
-  }, [ playClass, handleInputChange])
+  }, [playClass, handleInputChange])
 
   const updateDrawPeriod = () => {
     setLastPeriodData(null)

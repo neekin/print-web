@@ -9,7 +9,7 @@ const threeDplay = [
   { value: '2D', label: '2D' },
   { value: '胆拖', label: '胆拖' }
 ]
-const happyEightOptions = [{ value: '单式', label: '单式' }]
+const happyEightOptions = [{ value: '单式', label: '单式' },{value: '复式', label: '复式'}]
 
 export function usePlayConfig(onClear) {
   const [playType, setPlayType] = useState('单选')

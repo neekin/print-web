@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import PrintMain from './pages/PrintMain'
+import usePWAUpdatePrompt from './hooks/usePWAUpdatePrompt'
 import { healthCheck, /* createAndVerify */ } from './utils/licenceService'
 
 // 免重复校验缓存时长（毫秒），例如 10 分钟；不需要可设为 0
@@ -8,7 +9,8 @@ const LICENSE_CACHE_KEY = 'license_check_ok_at'
 
 function App() {
   const [allow, setAllow] = useState(null)
-
+  const { UpdateModal } = usePWAUpdatePrompt()
+  console.log('App render', { allow })
   useEffect(() => {
     const isDev = import.meta.env.DEV
     if (isDev) {
@@ -66,7 +68,10 @@ function App() {
   if (!allow) {
     return <div style={{ padding: 40, textAlign: 'center', color: 'red' }}>客户端校验失败，禁止访问！</div>
   }
-  return <PrintMain />
+  return <>
+    <PrintMain />
+    <UpdateModal />
+  </>
 }
 
 export default App

@@ -36,6 +36,7 @@ export function useOrders(playClass, playType, priceUnit = 2, contributeUnit = 0
 
   useEffect(() => {
     const valid = validOrders()
+    console.log('Calculating totals...', valid)
     if (!valid.length) {
       setTotals({ price: '0.00', contribute: '0.00' })
       return
@@ -142,6 +143,28 @@ export function useOrders(playClass, playType, priceUnit = 2, contributeUnit = 0
         )
         totalPrice = totalMultip * priceUnit
         totalContribute = totalPrice * 0.3
+      }
+    }else if (playClass === '快乐8' && playType.includes('复式')) {
+       const v = valid[0]
+      if (v && Array.isArray(v)) {
+        const pattern = /^选([一二三四五六七八九十])复式$/
+        const cn = v[0]
+        const match = typeof cn === 'string' && cn.match(pattern)
+        const cn2num = { 一:1, 二:2, 三:3, 四:4, 五:5, 六:6, 七:7, 八:8, 九:9, 十:10 }
+        if (match) {
+          const baseM = cn2num[match[1]]
+          const nums = Array.isArray(v[1][0][0]) ? v[1][0][0] : []
+          const mult = parseInt(v[1][0][1], 10) > 0 ? parseInt(v[1][0][1], 10) : 1
+          const n = nums.length
+          // debugger
+          let note = 0
+          if (n >= baseM) {
+            note = combination(n, baseM)
+          }
+          totalPrice = note * priceUnit * mult
+          // 若快乐8 贡献比例不同可在此单独配置
+          totalContribute =totalPrice * 0.3
+        }
       }
     }
     // 其它（保持原默认兜底：当成普通“单注 * 倍数”）

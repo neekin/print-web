@@ -14,12 +14,13 @@ export const padZero = (n) => String(n).padStart(2, '0')
 
 // =============== HTML 生成逻辑：【修正】彻底移除 gap-spacer ===============
 function generateOrderRows(data) {
+  console.log(data)
+  
   const orders = data.orders || []
   if (!orders.length) return ''
   const playMethodVal = orders[0]?.[0]
   const Index = ['①', '②', '③', '④', '⑤']
-
-  if (playMethodVal === '定位') {
+  if (data.playClass == '3D' && playMethodVal === '定位') {
     const pos = orders[0].slice(1, 4)
     const multiple = orders[0][4]
     const FLAGS = ['[百]', '[十]', '[个]']
@@ -41,7 +42,7 @@ function generateOrderRows(data) {
       </div>`).join('')
   }
 
-  if (playMethodVal?.includes('复式')) {
+  if (data.playClass == '3D' &&playMethodVal?.includes('复式')) {
     const nums = orders[0][1]
     const multiple = orders[0][2]
     return `<div class="order-line">
@@ -50,7 +51,7 @@ function generateOrderRows(data) {
     </div>`
   }
 
-  if (playMethodVal === '2D') {
+  if (data.playClass == '3D' && playMethodVal === '2D') {
     return orders.map((o, i) => `
       <div class="order-line">
         
@@ -61,7 +62,7 @@ function generateOrderRows(data) {
       </div>`).join('')
   }
 
-  if (playMethodVal?.includes('胆拖')) {
+  if (data.playClass == '3D' && playMethodVal?.includes('胆拖')) {
     const danma = orders[0][1] || []
     const tuoma = orders[0][2] || []
     const multiple = orders[0][3]
@@ -107,6 +108,38 @@ function generateOrderRows(data) {
       </div>`).join('')
   }
 
+  if(/^选(?:[一二三四五六七八九]|十)复式$/.test(playMethodVal)){
+    const rawLines = Array.isArray(orders[0]?.[1]) ? orders[0][1] : []
+    const nums = rawLines[0]?.[0] || []
+    const multiple = rawLines[0]?.[1] || 1
+
+    // 分组：每 8 个一行
+    const rows = []
+    for (let i = 0; i < nums.length; i += 8) {
+      rows.push(nums.slice(i, i + 8))
+    }
+
+    const rowsHtml = rows.map((row, idx) => {
+      const isLast = idx === rows.length - 1
+      // 加号放在 join 内，天然无尾部加号
+      const numbersHtml = row
+        .map(n => `<span class="num mono">${padZero(n)}</span>`)
+        .join('<span class="plus">+</span>')
+      return `
+        <div class="he-row">
+          ${numbersHtml}
+          ${isLast ? `<span class="multiple-inline">[${multiple}倍]</span>` : ''}
+        </div>`
+    }).join('')
+
+    return `
+      <div class="happy order-line">
+        <div class="happy-eight-lines">
+          ${rowsHtml}
+        </div>
+      </div>`
+  }
+
   const isSingle = data.playMethod === '3D单选'
   const sep = isSingle ? ' ' : '+'
   return orders.map((o, i) => `
@@ -119,9 +152,9 @@ function generateOrderRows(data) {
     </div>`).join('')
 }
 
-export function buildReceiptHtml(data,offsetX_mm=0) {
+export function buildReceiptHtml(data,offsetX_mm=20) {
   const isHappyEight = data.playClass === '快乐8'
-
+  console.log('------------------------------------------------------------')
    const getTitle = () => {
         let title = '3D'
         if (isHappyEight) {
@@ -150,6 +183,7 @@ export function buildReceiptHtml(data,offsetX_mm=0) {
                   line-height: 1.1;
                   color: black;
                   background-color: white; /* 确保背景是白色 */
+                  overflow: hidden;
               }
               .receipt-container {
                   padding: 0; /* 上下留一点边距 */
@@ -193,6 +227,39 @@ export function buildReceiptHtml(data,offsetX_mm=0) {
               }
               .happy .multiple{
                 margin-left:20px;
+              }
+            
+              .happy-eight-lines{
+                display:inline-block;
+                font-size:0;
+                vertical-align: top;
+              }
+              .happy-eight-lines .he-row{
+                display:flex;
+                align-items:center;
+                margin-bottom:2px;
+                font-size:15px;
+              }
+              .happy-eight-lines .he-row:last-child{
+                margin-bottom:0;
+              }
+              .happy-eight-lines .num{
+                display:inline-block;
+                width:20px;
+                text-align:center;
+                font-size:18px;
+              }
+              .happy-eight-lines .plus{
+                display:inline-block;
+                width:14px;
+                text-align:center;
+                font-size:18px;
+              }
+              .happy-eight-lines .multiple-inline{
+                display:inline-block;
+                margin-left:6px;
+                font-size:14px;
+                line-height:16px;
               }
               .happy-eight-grid{
                   display: inline-grid;
@@ -322,8 +389,6 @@ export function buildReceiptHtml(data,offsetX_mm=0) {
                      padding: 0; /* 打印时的实际边距 */
                      overflow: hidden;
                      margin-left: ${offsetX_mm}mm;
-         
-
                   }
               }
               .bold{
