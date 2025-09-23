@@ -154,7 +154,6 @@ function generateOrderRows(data) {
 
 export function buildReceiptHtml(data,offsetX_mm=20) {
   const isHappyEight = data.playClass === '快乐8'
-  console.log('------------------------------------------------------------')
    const getTitle = () => {
         let title = '3D'
         if (isHappyEight) {
@@ -174,6 +173,19 @@ export function buildReceiptHtml(data,offsetX_mm=20) {
           <meta charset="UTF-8">
           <title>打印小票</title>
           <style>
+          html,body{
+              padding:0;margin:0;
+              width:80mm;           /* 或直接 640px（二选一） */
+            }
+            body{
+              font:12px/1.25 "Microsoft YaHei","Arial",sans-serif;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            #receipt{
+              width:80mm;           /* 或 640px，与上保持一致 */
+              box-sizing:border-box;
+            }
               body {
                   font-family: "Microsoft YaHei", "微软雅黑", Arial;
                   font-size: 10px; /* 根据实际效果调整基础字号 */
@@ -368,7 +380,7 @@ export function buildReceiptHtml(data,offsetX_mm=20) {
                   /* background-color: rgba(0,0,0,0.1); /* 可选：用于调试时可视化垫片 */
                 }
               /* 打印特定样式 */
-              @media print {
+              /* @media print {
                   @page {
                       size: 80mm auto; /* 纸张尺寸 */
                       margin: 0; /* 打印边距 */
@@ -390,10 +402,34 @@ export function buildReceiptHtml(data,offsetX_mm=20) {
                      overflow: hidden;
                      margin-left: ${offsetX_mm}mm;
                   }
-              }
+              }*/
               .bold{
                   font-weight:600;
                }
+                  /* 打印专用：切换单位并禁止再次缩放 */
+              @media print {
+                @page {
+                  size: 80mm auto;
+                  margin: 0;
+                }
+                html, body {
+                  width:80mm;        /* 纸宽 */
+                  margin:0;
+                  padding:0;
+                }
+                /* 真实可打印内容 76mm，留左右 2mm（可用 padding 或内包一层） */
+                .receipt-container {
+                  width:76mm;
+                  margin:0 2mm;
+                  box-sizing:border-box;
+                }
+              }
+
+              /* 其它字体/行高等保持不变... */
+              .mono {
+                font-feature-settings:"tnum";
+                font-variant-numeric: tabular-nums;
+              }
           </style>
       </head>
       <body>

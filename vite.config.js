@@ -42,5 +42,11 @@ export default defineConfig({
       filename: 'sw.js'
     })
   ],
-  define: { __APP_VERSION__: JSON.stringify(Date.now()) } // 或用 package.json 版本
+  define: { __APP_VERSION__: JSON.stringify(Date.now()) },
+    server: {
+    host: '0.0.0.0',   // 允许局域网访问
+    port: 5173,
+    // 如果需要通过 http://打印机主机名.local:5173 访问，可保持默认
+    // strictPort: true  // 需要固定端口时再打开
+  },
 })
