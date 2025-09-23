@@ -352,7 +352,7 @@ export function buildReceiptHtml(data,offsetX_mm=20) {
               .footer-line { font-size: 12px;  line-height: 12px; }
               .footer-line span{ font-size: 10px; }
               .barcode-container, .qrcode-container {  margin-top:2px; margin-bottom: 2px; }
-              .barcode-container img, .qrcode-container img { max-width: 90%; height: auto; display: inline-block; }
+              .barcode-container img, .qrcode-container img { max-width: 100%; height: auto; display: inline-block; }
               .point{
                font-size: 10px;
                 transform: scale(0.1);

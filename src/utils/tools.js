@@ -32,7 +32,7 @@ export const generateBarcode = async (text, canvasId = 'barcode-canvas') => {
       text,
       scale: 1,
       columns: 4,
-      width: 180,
+      width: 200,
       height: 40
     })
     return canvas.toDataURL('image/png')
