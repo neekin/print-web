@@ -166,6 +166,12 @@ export function useOrders(playClass, playType, priceUnit = 2, contributeUnit = 0
           totalContribute =totalPrice * 0.3
         }
       }
+    }else if(playClass==='快乐8' && playType.includes('胆拖')){
+      const d = valid[0]
+      const tm = Array.isArray(d[2]) ? d[2] : []
+      const multiple = parseInt(d[3],10) > 0 ? parseInt(d[3],10) : 1
+      totalPrice = tm.length * priceUnit * multiple
+      totalContribute =totalPrice * 0.3
     }
     // 其它（保持原默认兜底：当成普通“单注 * 倍数”）
     else {

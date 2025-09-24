@@ -38,7 +38,8 @@ const PLAY_RENDER_REGISTRY = {
   '快乐8': {
     // 根据你实际的选项名同时兼容
     '单式':        { type: 'single', component: EightSignleSelect },// 若后面只用“单式”
-    '复式':        { type: 'single', component: EightDoubleSelect }
+    '复式':        { type: 'single', component: EightDoubleSelect },
+    '胆拖':      { type: 'single', component: HappyEight }
   }
 }
 
@@ -158,6 +159,12 @@ function PrintMain() {
     const data = await buildReceiptData()
     if (!data) {
       messageApi.warning('无有效投注')
+      return
+    }
+    const hasZuXuan3 = data.orders.some(order => order[0] === '组选三')
+    const hasZuXuan6 = data.orders.some(order => order[0] === '组选六')
+    if (hasZuXuan3 && hasZuXuan6) {
+      messageApi.error('非法票据：不能同时包含组选三和组选六')
       return
     }
     try {

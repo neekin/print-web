@@ -139,6 +139,21 @@ function generateOrderRows(data) {
         </div>
       </div>`
   }
+if(/^选(?:[一二三四五六七八九]|十)胆拖$/.test(playMethodVal)){
+  const dm = Array.isArray(orders[0]?.[1]) ? orders[0][1] : []
+  const tm = Array.isArray(orders[0]?.[2]) ? orders[0][2] : []
+  const multiple = orders[0]?.[3] || 1
+  const dmStr = dm.map(n=>padZero(n))
+  console.log(dmStr)
+  return `
+    <div class="order-line">
+      <div class="happy-eight-lines grid">
+        ${dmStr.map(n=>`<span class="num">${n}</span>`).join('+')}<span class="sanjiao"></span>${tm.map(n=>`<span class="num">${padZero(n)}</span>`).join('+')}
+          <span class="multiple">[${multiple}倍]</span>
+      </div>
+    
+    </div>`
+}
 
   const isSingle = data.playMethod === '3D单选'
   const sep = isSingle ? ' ' : '+'
@@ -196,6 +211,26 @@ html,body{
   padding:0;
   
 }
+  .grid-row {
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  gap: 2px;
+  font-size: 15px;
+  align-items: center;
+}
+.happy-eight-lines.grid .num {
+  text-align: center;
+  font-size: 14px;
+}
+.grid-row .plus {
+  text-align: center;
+  font-size: 16px;
+}
+
+.grid-row .text {
+  text-align: center;
+  font-size: 14px;
+}
 
 /* 打印：统一只声明一次宽度，纸宽 74mm，内容 74mm（左右 2mm） */
  @media print {
@@ -250,31 +285,29 @@ html,body{
 .order-line:last-child{margin-bottom:0;}
 .index,.pos-index{padding-right:5px;flex-shrink:0;}
 .numbers,.pos-numbers{font-size:16px;letter-spacing:4px;}
-.dantuo{font-size:16px;letter-spacing:1px;white-space:nowrap;}
+.dantuo{font-size:14px;letter-spacing:1px;white-space:nowrap;}
 .multiple,.multiple-inline{font-size:14px;margin-left:10px;flex-shrink:0;}
 
 .happy{display:flex;align-items:center;flex-wrap:wrap;}
 .happy .multiple{margin-left:20px;}
-
+.happy-eight-lines.grid{
+    display: grid;
+    grid-template-columns: repeat(16, 16px);
+    gap: 1px;
+    flex-grow: 1;
+    justify-items: center;
+    font-size: 16px;
+    align-items: center;
+}
+.happy-eight-lines.grid .multiple{
+grid-column: span 3; 
+}
 .happy-eight-lines{display:inline-block;font-size:0;vertical-align:top;}
 .happy-eight-lines .he-row{display:flex;align-items:center;margin-bottom:2px;font-size:15px;}
 .happy-eight-lines .he-row:last-child{margin-bottom:0;}
 .happy-eight-lines .num{display:inline-block;width:20px;text-align:center;font-size:18px;}
 .happy-eight-lines .plus{display:inline-block;width:14px;text-align:center;font-size:18px;}
 .happy-eight-lines .multiple-inline{display:inline-block;margin-left:6px;font-size:14px;line-height:16px;}
-
-.happy-eight-grid{
-  display:inline-grid;
-  grid-template-columns:repeat(var(--cols,1),20px);
-  gap:2px 4px;
-  margin-left:4px;
-  font-size:16px;
-}
-.happy-eight-grid.is-full{
-  font-size:14px;
-  grid-template-columns:repeat(var(--cols,1),18px);
-  gap:2px 3px;
-}
 
 .order-happy-eight-container{
   display:grid;

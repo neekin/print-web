@@ -49,6 +49,10 @@ const Order = ({ onChange = () => {}, playType = '单选' }) => {
     } else if (play == '组选六') {
       return [
         {
+          value: '组选三',
+          label: '组选三'
+        },
+        {
           value: '组选六',
           label: '组选六'
         }

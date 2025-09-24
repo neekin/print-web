@@ -10,27 +10,34 @@ const HappyEight = ({ onChange }) => {
   const [isDanmaCollapsed, setIsDanmaCollapsed] = useState(false)
   const [isTuomaCollapsed, setIsTuomaCollapsed] = useState(false)
 
+  const numberToChinese = (num) => {
+    const map = { 2: '二', 3: '三', 4: '四', 5: '五', 6: '六', 7: '七', 8: '八', 9: '九', 10: '十' }
+    return map[num] || num
+  }
+
+  const getPlayMethod = (danmaCount) => `选${numberToChinese(danmaCount + 1)}胆拖`
+
   const handleDanmaChange = (checkedValues) => {
-    // 限制胆码最多选择4个
-    if (checkedValues.length <= 4) {
+    // 限制胆码最少1个，最多9个
+    if (checkedValues.length >= 1 && checkedValues.length <= 9) {
       setDanmaValues(checkedValues)
 
-      // 如果胆码不足4个，清空拖码
-      if (checkedValues.length < 4) {
+      // 如果胆码不足9个，清空拖码（可选：根据需求调整）
+      if (checkedValues.length < 9) {
         setTuomaValues([])
       } else {
-        // 胆码满4个时，清理拖码中与胆码重复的项
+        // 胆码满9个时，清理拖码中与胆码重复的项
         const filteredTuoma = tuomaValues.filter((value) => !checkedValues.includes(value))
         setTuomaValues(filteredTuoma)
       }
 
-      // 回调给父组件
+      // 回调给父组件（仅当拖码有值时）
       const tuomaResult =
-        checkedValues.length === 4
+        checkedValues.length >= 1 && checkedValues.length <= 9
           ? tuomaValues.filter((value) => !checkedValues.includes(value))
           : []
       onChange &&
-        onChange(tuomaResult.length > 0 ? ['快乐8', checkedValues, tuomaResult, multiple] : null)
+        onChange(tuomaResult.length > 0 ? [getPlayMethod(checkedValues.length), checkedValues, tuomaResult, multiple] : null)
     }
   }
 
@@ -40,7 +47,7 @@ const HappyEight = ({ onChange }) => {
     setTuomaValues(filteredValues)
     // 回调给父组件
     onChange &&
-      onChange(filteredValues.length > 0 ? ['快乐8', danmaValues, filteredValues, multiple] : null)
+      onChange(filteredValues.length > 0 ? [getPlayMethod(danmaValues.length), danmaValues, filteredValues, multiple] : null)
   }
 
   // 全拖按钮点击事件
@@ -51,12 +58,12 @@ const HappyEight = ({ onChange }) => {
     // 回调给父组件
     onChange &&
       onChange(
-        allAvailableValues.length > 0 ? ['快乐8', danmaValues, allAvailableValues, multiple] : null
+        allAvailableValues.length > 0 ? [getPlayMethod(danmaValues.length), danmaValues, allAvailableValues, multiple] : null
       )
   }
 
-  // 胆码是否已选择4个
-  const isDanmaComplete = danmaValues.length === 4
+  // 胆码是否有效（至少1个，最多9个）
+  const isDanmaValid = danmaValues.length >= 1 && danmaValues.length <= 9
 
   // 拖码选项（包含所有数字，但重复的会被禁用）
   const tuomaOptions = numberOptions.map((option) => ({
@@ -68,7 +75,7 @@ const HappyEight = ({ onChange }) => {
   return (
     <>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <span>胆码: ({danmaValues.length}/4)</span>
+        <span>胆码: ({danmaValues.length}/9)</span>
         <Button
           type="link"
           size="small"
@@ -99,8 +106,8 @@ const HappyEight = ({ onChange }) => {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
         <span>拖码:</span>
-        {!isDanmaComplete && <span style={{ color: '#999' }}>(请先选择4个胆码)</span>}
-        {isDanmaComplete && (
+        {!isDanmaValid && <span style={{ color: '#999' }}>(请先选择1-9个胆码)</span>}
+        {isDanmaValid && (
           <>
             <Button type="link" size="small" onClick={handleSelectAllTuoma} style={{ padding: 0 }}>
               全拖
@@ -127,7 +134,7 @@ const HappyEight = ({ onChange }) => {
             options={tuomaOptions}
             value={tuomaValues}
             onChange={handleTuomaChange}
-            disabled={!isDanmaComplete}
+            disabled={!isDanmaValid}
             style={{
               display: 'grid',
               gridTemplateColumns: 'repeat(10, 1fr)',
@@ -149,7 +156,7 @@ const HappyEight = ({ onChange }) => {
             setMultiple(val)
             // 实时回调给父组件
             onChange &&
-              onChange(tuomaValues.length > 0 ? ['快乐8', danmaValues, tuomaValues, val] : null)
+              onChange(tuomaValues.length > 0 ? [getPlayMethod(danmaValues.length), danmaValues, tuomaValues, val] : null)
           }}
         />
       </div>
