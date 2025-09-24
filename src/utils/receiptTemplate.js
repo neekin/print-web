@@ -148,7 +148,7 @@ if(/^选(?:[一二三四五六七八九]|十)胆拖$/.test(playMethodVal)){
   return `
     <div class="order-line">
       <div class="happy-eight-lines grid">
-        ${dmStr.map(n=>`<span class="num">${n}</span>`).join('+')}<span class="sanjiao"></span>${dm.length+tm.length==80?"全拖": tm.map(n=>`<span class="num">${padZero(n)}</span>`).join('+')}
+        ${dmStr.map(n=>`<span class="num">${n}</span>`).join('+')}<span class="sanjiao"></span>${dm.length+tm.length==80?"<span style='grid-column:span 2;'>全拖</span>": tm.map(n=>`<span class="num">${padZero(n)}</span>`).join('+')}
           <span class="multiple">[${multiple}倍]</span>
       </div>
     
