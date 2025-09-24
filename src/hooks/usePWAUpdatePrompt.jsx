@@ -17,6 +17,15 @@ export default function usePWAUpdatePrompt() {
   useEffect(() => {
     if (!('serviceWorker' in navigator)) return
 
+    // 主动轮询检查更新，每1分30秒（90秒）
+    const checkForUpdates = () => {
+      navigator.serviceWorker.ready.then(reg => {
+        console.log('[PWA] checking for updates...')
+        reg.update()
+      })
+    }
+    const intervalId = setInterval(checkForUpdates, 90000) // 1分30秒 = 90000ms
+
     // 监听 sw 的更新流程（来自 vite-plugin-pwa 推荐写法的变种）
     const onRegistration = (reg) => {
       if (!reg) return
@@ -62,6 +71,7 @@ export default function usePWAUpdatePrompt() {
     navigator.serviceWorker.addEventListener('message', onMessage)
 
     return () => {
+      clearInterval(intervalId)
       navigator.serviceWorker.removeEventListener('message', onMessage)
     }
   }, [])
