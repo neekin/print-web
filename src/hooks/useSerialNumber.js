@@ -12,7 +12,7 @@ export function useSerialNumber() {
     if (!val) {
       next = 1
     } else {
-      next = parseInt(val, 10) + 1
+      next = parseInt(val, 10)
     }
     localStorage.setItem(k, next.toString())
     return next
