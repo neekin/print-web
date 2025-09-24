@@ -101,12 +101,12 @@ export function useOrders(playClass, playType, priceUnit = 2, contributeUnit = 0
             else if (danma.length === 2) note = k
           } else if (pm === '组六单选胆拖') {
             if (danma.length === 1) note = combination(k, 2) * 6
-            else if (danma.length === 2) note = 2 * combination(k, 2) * 6
+            else if (danma.length === 2) note =  k * 6
           } else if (pm === '组三单选胆拖') {
-            if (danma.length === 1) note = k * 2
-            else if (danma.length === 2) {
-              note = danma[0] === danma[1] ? k * 2 : 2 * k * 6
-            }
+            if (danma.length === 1) note = k * 6
+            // else if (danma.length === 2) {
+            //   note = danma[0] === danma[1] ? k * 2 : 2 * k * 6
+            // }
           } else if (pm === '单选全胆拖') {
             if (danma.length === 1) note = 1 + 6 * k + 3 * k * (k - 1)
             else if (danma.length === 2) {

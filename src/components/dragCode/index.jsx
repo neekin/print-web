@@ -91,6 +91,8 @@ const DragCode = ({ onChange = () => { } }) => {
     }
   }, [danmaValue, tuomaValue, multiple, danmaError, onChange])
 
+  const danmaLength = play === '组三单选' ? 1 : 2
+  const danmaWidth = play === '组三单选' ? 90 : 180
   return (
     <>
       <Form.Item
@@ -136,11 +138,11 @@ const DragCode = ({ onChange = () => { } }) => {
         style={{ marginBottom: '8px' }}
       >
         <Input.OTP
-          style={{ width: 180 }}
+          style={{ width: danmaWidth }}
           size="small"
           // 仍然建议使用 onChange
           onInput={handleDanmaChange}
-          length={2}
+          length={danmaLength}
         />
       </Form.Item>
       {danmaError && (
