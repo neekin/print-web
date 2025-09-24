@@ -43,7 +43,7 @@ function App() {
             setAllow(true)
           } else {
             // 如需失败时自动创建再校验，取消下面注释
-            /*
+     
             const created = await createAndVerify(machineCode, 1)
             if (canceled) return
             if (created.ok) {
@@ -52,7 +52,7 @@ function App() {
             } else {
               setAllow(false)
             }
-            */
+            
             setAllow(false)
           }
         } catch {
