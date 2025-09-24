@@ -8,11 +8,14 @@ export function useSerialNumber() {
   const getNextSerial = () => {
     const k = key()
     const val = localStorage.getItem(k)
+    let next
     if (!val) {
-      localStorage.setItem(k, '1')
-      return 1
+      next = 1
+    } else {
+      next = parseInt(val, 10) + 1
     }
-    return parseInt(val, 10) + 1
+    localStorage.setItem(k, next.toString())
+    return next
   }
 
   const setSerial = (num) => {

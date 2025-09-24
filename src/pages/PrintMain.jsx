@@ -171,6 +171,7 @@ function PrintMain() {
       await printHtmlTicket(data, offsetX)
       messageApi.success('打印成功')
       // clearOrders()
+      setSerial(parseInt(tmpSerialNumber) + 1)
       setShowPreview(false)
       setImgSrc(null)
     } catch (err) {
@@ -323,7 +324,7 @@ function PrintMain() {
             value={tmpSerialNumber}
             onChange={(e) => {
               setTmpSerialNumber(e.target.value)
-              setSerial(e.target.value)
+              // setSerial(e.target.value)
             }}
           />
           <Checkbox
