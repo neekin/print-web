@@ -171,9 +171,44 @@ function PrintMain() {
       await printHtmlTicket(data, offsetX)
       messageApi.success('打印成功')
       // clearOrders()
-      setSerial(parseInt(tmpSerialNumber) + 1)
+      setSerial(parseInt(tmpSerialNumber))
       setShowPreview(false)
       setImgSrc(null)
+
+
+            //   const machineId = machineIdSync()
+      //   const { barcodeData, ticketSaleTime, ...paramsData } = receiptData
+      //   paramsData.saleTime = paramsData.saleTime || ticketSaleTime
+      //   paramsData.orders = JSON.stringify(paramsData.orders)
+      //   paramsData.machineId = machineId // 添加机器码
+      //   console.log(JSON.stringify(paramsData), 'paramsData')
+      //   // 发送数据到后台
+      //   net
+      //     .fetch('https://armbian.chaofan.live/api/orders/create/', {
+      //       method: 'POST',
+      //       body: JSON.stringify(paramsData),
+      //       headers: { 'Content-Type': 'application/json' }
+      //     })
+      //     .then((res) => {
+      //       console.log(res, '打印数据发送成功')
+      //     })
+      // })
+
+      //打印成功后 发送统计数据给后台
+        const machineId = window.__machineCode
+        const { barcodeData, ticketSaleTime, ...paramsData } = data
+        paramsData.saleTime = paramsData.saleTime || ticketSaleTime
+        paramsData.orders = JSON.stringify(paramsData.orders)
+        paramsData.machineId = machineId // 添加机器码
+        console.log(JSON.stringify(paramsData), 'paramsData')
+        const createRes = await httpRequest({
+              url: 'https://armbian.chaofan.live/api/orders/create/',
+              method: 'POST',
+            data: JSON.stringify(paramsData),
+          })
+      
+        console.log(createRes, '打印数据发送成功')
+    
     } catch (err) {
       messageApi.error('打印失败: ' + err.message)
     }
