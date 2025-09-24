@@ -237,6 +237,8 @@ function TagLine({
               setLineMultiple(lineIndex, v)
               emitAllChange(true)
             }}
+            controls={true}
+            onClick={(e) => e.stopPropagation()} // 阻止事件冒泡，保持焦点
           />
         </div>
       </div>
