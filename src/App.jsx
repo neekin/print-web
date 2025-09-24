@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+
 import PrintMain from './pages/PrintMain'
 import usePWAUpdatePrompt from './hooks/usePWAUpdatePrompt'
 import { healthCheck, createAndVerify } from './utils/licenceService'
@@ -42,7 +43,7 @@ function App() {
             setAllow(true)
           } else {
             // 如需失败时自动创建再校验，取消下面注释
-            
+            /*
             const created = await createAndVerify(machineCode, 1)
             if (canceled) return
             if (created.ok) {
@@ -51,8 +52,8 @@ function App() {
             } else {
               setAllow(false)
             }
-            
-            // setAllow(false)
+            */
+            setAllow(false)
           }
         } catch {
           if (!canceled) setAllow(false)
@@ -66,7 +67,7 @@ function App() {
     return <div style={{ padding: 40 }}>正在校验客户端...</div>
   }
   if (!allow) {
-    return <div style={{ padding: 40, textAlign: 'center', color: 'red' }}>客户端校验失败，禁止访问！</div>
+    return <div style={{ padding: 40, textAlign: 'center', color: 'red' }}>客户端校验失败，禁止访问！机器码：{window.__machineCode}</div>
   }
   return <>
     <PrintMain />
