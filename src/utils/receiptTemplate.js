@@ -98,8 +98,8 @@ function generateOrderRows(data) {
     const colCount = Math.min(lines[0][0].length, 10)
     const gridClass = colCount >= 10 ? 'happy-eight-grid is-full' : 'happy-eight-grid';
     return lines.map((o, i) => `
-      <div class="happy order-line">
-          <span class="index">${Index[i] || ''}</span>
+      <div class="happy happy-signle order-line">
+          <span class="index" style="margin-top:-2px;">${Index[i] || ''}</span>
           <div class="${gridClass}" style="--cols:${colCount}">
             ${o[0].map(n => `<span class="num mono">${padZero(n)}</span>`).join('')}
           </div>
@@ -167,7 +167,7 @@ if(/^选(?:[一二三四五六七八九]|十)胆拖$/.test(playMethodVal)){
     </div>`).join('')
 }
 
-export function buildReceiptHtml(data, offsetX_mm = 0) {
+export function buildReceiptHtml(data, offsetX_px = 0) {
   const isHappyEight = data.playClass === '快乐8'
   const getTitle = () => isHappyEight ? '快 乐 8' : '3D'
   const barcodeImg = data.barcodeData
@@ -196,7 +196,7 @@ export function buildReceiptHtml(data, offsetX_mm = 0) {
 html,body{
   margin:0;
   padding:0;
-  width:74mm;
+  width:80mm;
   font:10px/1.25 "Microsoft YaHei","Arial",sans-serif;
   
    position:relative;
@@ -207,8 +207,9 @@ html,body{
 .receipt-container{
   box-sizing:border-box;
   width:74mm;
-  margin:0 auto;
   padding:0;
+  margin:0 auto;
+  margin-left: ${offsetX_px}px;
   
 }
   .grid-row {
@@ -240,14 +241,14 @@ html,body{
     text-rendering: optimizeSpeed;
   }
     @page {
-        size: 76mm auto; /* 纸张尺寸 */
+        size: 80mm auto; /* 纸张尺寸 */
         margin: 0; /* 打印边距 */
         padding:0;
        
        
     }
     body {
-        width: 74mm; /* 实际可打印宽度 */
+        width: 80mm; /* 实际可打印宽度 */
         margin: 0;
         padding: 0;
         background:#fff;
@@ -255,10 +256,10 @@ html,body{
          
     }
     .receipt-container {
-      width: 72mm;
-        padding: 0; /* 打印时的实际边距 */
-            
-        margin-left: ${offsetX_mm}mm;
+        width:74mm;
+        padding:0;
+        margin:0 auto;
+        margin-left: ${offsetX_px}px;
     }
   }
 
@@ -269,8 +270,9 @@ html,body{
 .game-name{font-size:16px;margin-bottom:4px;}
 .info-line{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  font-size:11px;
+  grid-template-columns: calc(1fr - 2px) 1fr 1fr;
+  font-size:12px;
+  grid-template-columns: calc(33.33% - 3px) calc(33.33% - 5px) 35.33%;
 }
 .order-section{margin-top:4px;overflow:hidden;}
 .order-line{
@@ -281,6 +283,7 @@ html,body{
   margin-bottom:3px;
   overflow:hidden;
   font-family:"Microsoft YaHei","微软雅黑",Arial;
+  font-width:600;
 }
 .order-line:last-child{margin-bottom:0;}
 .index,.pos-index{padding-right:5px;flex-shrink:0;}
@@ -289,7 +292,9 @@ html,body{
 .multiple,.multiple-inline{font-size:14px;margin-left:10px;flex-shrink:0;}
 
 .happy{display:flex;align-items:center;flex-wrap:wrap;}
-.happy .multiple{margin-left:20px;}
+.happy .multiple{margin-left:10px;}
+.happy-signle .num{margin-left:3px; font-size:16px;}
+.happy-signle .num:first-child{margin-left:0;}
 .happy-eight-lines.grid{
     display: grid;
     grid-template-columns: repeat(16, 16px);
@@ -319,6 +324,7 @@ grid-column: span 3;
   font-size:16px;
   text-align:center;
 }
+.happy-eight-lines .he-row .num{font-size:16px;}
 
 .sanjiao{
   position:relative;
@@ -387,7 +393,7 @@ grid-column: span 3;
     </div>
     <div class="footer-line">${data.machineCode}:${data.storeAddress}</div>
     <div class="footer-line">验票码:<span>${isHappyEight ? (data.verTicketCode || '').slice(0,17) : (data.verTicketCode || '')}</span></div>
-    ${!isHappyEight && data.lastPeriodData ? `<div class="footer-line">${data.lastPeriodData}</div>` : ''}
+    ${!isHappyEight && data.lastPeriodText ? `<div class="footer-line">${data.lastPeriodText}</div>` : ''}
     ${barcodeImg}
     ${data.qrCodeData ? `<div class="qrcode-container"><img id="qrCodeImg" src="data:image/png;base64,${data.qrCodeData}" alt="QR Code"></div>` : ''}
     <div class="footer-line center">${data.copywriting}</div>
@@ -397,8 +403,8 @@ grid-column: span 3;
 </html>`
 }
 
-export function buildPreviewHtml(data, offsetX_mm = 0) {
-  return buildReceiptHtml(data, offsetX_mm)
+export function buildPreviewHtml(data, offsetX_px = 0) {
+  return buildReceiptHtml(data, offsetX_px)
 }
 
 export function pixelsToMM(pixels, dpi = 203) {

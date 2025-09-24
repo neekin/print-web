@@ -7,7 +7,7 @@ import { buildPreviewHtml, pixelsToMM } from './receiptTemplate'
  * @param {number} printerDpi 打印机 DPI（可选，默认 203）
  * @returns {Promise<{ok:boolean, error?:string}>}
  */
-export function printHtmlTicket(data, offsetXPx = 0, printerDpi = 203) {
+export function printHtmlTicket(data, offsetXPx = 0) {
   return new Promise((resolve, reject) => {
     if (!window.chrome || !window.chrome.webview) {
       reject(new Error('不在 WebView2 环境中'))
@@ -17,9 +17,9 @@ export function printHtmlTicket(data, offsetXPx = 0, printerDpi = 203) {
     const requestId = 'pr_' + Date.now() + '_' + Math.random().toString(16).slice(2)
 
     // 像素转毫米（receiptTemplate 里 buildReceiptHtml 期望 mm）
-    const offsetXmm = pixelsToMM(offsetXPx, printerDpi)
+    // const offsetXmm = pixelsToMM(offsetXPx, printerDpi)
 
-    const html = buildPreviewHtml(data, offsetXmm)
+    const html = buildPreviewHtml(data, offsetXPx)
 
     const handler = (e) => {
       const msg = e.data

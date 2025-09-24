@@ -168,7 +168,7 @@ function PrintMain() {
       return
     }
     try {
-      await printHtmlTicket(data, offsetX, 203)
+      await printHtmlTicket(data, offsetX)
       messageApi.success('打印成功')
       clearOrders()
       setShowPreview(false)
