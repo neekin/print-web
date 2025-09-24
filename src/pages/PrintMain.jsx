@@ -170,7 +170,7 @@ function PrintMain() {
     try {
       await printHtmlTicket(data, offsetX)
       messageApi.success('打印成功')
-      clearOrders()
+      // clearOrders()
       setShowPreview(false)
       setImgSrc(null)
     } catch (err) {
