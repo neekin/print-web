@@ -251,6 +251,7 @@ function TagLine({
             min={1}
             value={lineMultiple}
             style={{ width: 70 }}
+            onClick={e => e.stopPropagation()}
             onChange={(val) => {
               const v = Number(val) || 1
               setLineMultiple(lineIndex, v)

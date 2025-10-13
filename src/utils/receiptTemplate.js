@@ -110,7 +110,7 @@ function generateOrderRows(data) {
 
   if(/^选(?:[一二三四五六七八九]|十)复式$/.test(playMethodVal)){
     const rawLines = Array.isArray(orders[0]?.[1]) ? orders[0][1] : []
-    const nums = rawLines[0]?.[0] || []
+    const nums = (rawLines[0]?.[0] || []).slice().sort((a, b) => a - b)
     const multiple = rawLines[0]?.[1] || 1
 
     // 分组：每 8 个一行
