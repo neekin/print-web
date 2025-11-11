@@ -66,17 +66,17 @@ function generateOrderRows(data) {
     const danma = orders[0][1] || []
     const tuoma = orders[0][2] || []
     const multiple = orders[0][3]
-    const isSingleGroup = playMethodVal === '组三单选胆拖' || playMethodVal === '组六单选胆拖'
-    if (isSingleGroup && danma.length === 2 && danma[0] !== danma[1]) {
-      return danma.map((d, i) => `
-        <div class="order-line">
+    // const isSingleGroup = playMethodVal === '组三单选胆拖' || playMethodVal === '组六单选胆拖'
+    // if (isSingleGroup && danma.length === 2 && danma[0] !== danma[1]) {
+    //   return danma.map((d, i) => `
+    //     <div class="order-line">
     
-            <span class="index">${Index[i]}</span>
-            <span class="dantuo">${d}<span class="sanjiao"></span>${tuoma.join('+')}</span>
-       <div class="gap-spacer"></div>
-          <span class="multiple">[${multiple}倍]</span>
-        </div>`).join('')
-    }
+    //         <span class="index">${Index[i]}</span>
+    //         <span class="dantuo">${d}<span class="sanjiao"></span>${tuoma.join('+')}</span>
+    //    <div class="gap-spacer"></div>
+    //       <span class="multiple">[${multiple}倍]</span>
+    //     </div>`).join('')
+    // }
     return `
       <div class="order-line">
         
